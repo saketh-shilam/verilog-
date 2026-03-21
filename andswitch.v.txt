@@ -1,0 +1,38 @@
+module and_gate(
+    input a, b,
+    output y
+);
+    supply1 vdd;     // logic 1
+    supply0 gnd;     // logic 0
+
+    wire w;
+
+    // First switch controlled by 'a'
+    tranif1 t1(w, vdd, a);
+
+    // Second switch controlled by 'b'
+    tranif1 t2(y, w, b);
+
+    // Pull down when any input is 0
+    tranif0 t3(y, gnd, a);
+    tranif0 t4(y, gnd, b);
+
+endmodule
+module tb_and_gate();
+    reg a;
+    reg b;
+    wire y;
+
+    and_gate dut (.a(a), .b(b), .y(y));
+
+    initial begin
+        $monitor("time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+
+        $finish;
+    end
+endmodule

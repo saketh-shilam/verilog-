@@ -1,0 +1,26 @@
+module and_beh(
+    input a, b,
+    output reg y    // ✅ reg is mandatory
+);
+    always @(*) begin
+        y = a & b;
+    end
+endmodule	
+module tb_and_beh;
+    reg a;
+    reg b;
+    wire y;
+
+    and_beh dut (.a(a), .b(b), .y(y));
+
+    initial begin
+        $monitor("time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+
+        $finish;
+    end
+endmodule

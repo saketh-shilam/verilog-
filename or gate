@@ -1,0 +1,88 @@
+// ================================
+// 1. Gate Level Modeling
+// ================================
+module or_gate_gatelevel (
+    input a, b,
+    output y
+);
+    or (y, a, b);
+endmodule
+
+
+// ================================
+// 2. Dataflow Modeling
+// ================================
+module or_gate_dataflow (
+    input a, b,
+    output y
+);
+    assign y = a | b;
+endmodule
+
+
+// ================================
+// 3. Behavioral Modeling
+// ================================
+module or_gate_behavioral (
+    input a, b,
+    output reg y
+);
+    always @(*) begin
+        y = a | b;
+    end
+endmodule
+
+
+// ================================
+// 4. Switch Level Modeling
+// ================================
+module or_gate_switch (
+    input a, b,
+    output y
+);
+    supply1 Vdd;
+    supply0 Gnd;
+
+    wire w1, w2;
+
+    pmos p1 (w1, Vdd, a);
+    pmos p2 (w2, Vdd, b);
+
+    nmos n1 (y, w1, a);
+    nmos n2 (y, w2, b);
+endmodule
+
+
+// ================================
+// Testbench
+// ================================
+module tb_or_gate;
+
+    reg a, b;
+    wire y1, y2, y3, y4;
+
+    // Instantiate all models
+    or_gate_gatelevel     g1 (a, b, y1);
+    or_gate_dataflow      g2 (a, b, y2);
+    or_gate_behavioral    g3 (a, b, y3);
+    or_gate_switch        g4 (a, b, y4);
+
+    initial begin
+        $display("A B | Gate Dataflow Behavioral Switch");
+
+        a=0; b=0; #10;
+        $display("%b %b | %b %b %b %b", a,b,y1,y2,y3,y4);
+
+        a=0; b=1; #10;
+        $display("%b %b | %b %b %b %b", a,b,y1,y2,y3,y4);
+
+        a=1; b=0; #10;
+        $display("%b %b | %b %b %b %b", a,b,y1,y2,y3,y4);
+
+        a=1; b=1; #10;
+        $display("%b %b | %b %b %b %b", a,b,y1,y2,y3,y4);
+
+        $finish;
+    end
+
+endmodule

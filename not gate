@@ -1,0 +1,75 @@
+`timescale 1ns/1ps
+
+// ================================
+// 1. Gate Level Modeling
+// ================================
+module not_gate_gate (
+    input a,
+    output y
+);
+    not (y, a);
+endmodule
+
+
+// ================================
+// 2. Dataflow Modeling
+// ================================
+module not_gate_dataflow (
+    input a,
+    output y
+);
+    assign y = ~a;
+endmodule
+
+
+// ================================
+// 3. Behavioral Modeling
+// ================================
+module not_gate_behavioral (
+    input a,
+    output reg y
+);
+    always @(*) begin
+        y = ~a;
+    end
+endmodule
+
+
+// ================================
+// 4. Switch Level (CMOS Inverter)
+// ================================
+module not_gate_switch (
+    input a,
+    output y
+);
+    supply1 Vdd;
+    supply0 Gnd;
+
+    pmos p1 (y, Vdd, a);  // ON when a=0
+    nmos n1 (y, Gnd, a);  // ON when a=1
+endmodule
+
+
+// ================================
+// Testbench
+// ================================
+module tb_not;
+
+    reg a;
+    wire y1, y2, y3, y4;
+
+    not_gate_gate        g1(a, y1);
+    not_gate_dataflow    g2(a, y2);
+    not_gate_behavioral  g3(a, y3);
+    not_gate_switch      g4(a, y4);
+
+    initial begin
+        $monitor("A=%b | %b %b %b %b", a, y1, y2, y3, y4);
+
+        a=0; #10;
+        a=1; #10;
+
+        $finish;
+    end
+
+endmodule

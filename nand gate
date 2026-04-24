@@ -1,0 +1,136 @@
+// ============================================
+// NAND Gate – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (NAND)
+// ============================================
+module nand_gate_gate(y, a, b);
+output y;
+input a, b;
+
+nand (y, a, b);
+
+endmodule
+
+// Testbench
+module tb_nand_gate_gate;
+reg a, b;
+wire y;
+
+nand_gate_gate uut (y, a, b);
+
+initial begin
+    $monitor("[Gate] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (NAND)
+// ============================================
+module nand_gate_dataflow(y, a, b);
+output y;
+input a, b;
+
+assign y = ~(a & b);
+
+endmodule
+
+// Testbench
+module tb_nand_gate_dataflow;
+reg a, b;
+wire y;
+
+nand_gate_dataflow uut (y, a, b);
+
+initial begin
+    $monitor("[Dataflow] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (NAND)
+// ============================================
+module nand_gate_behavioral(y, a, b);
+output reg y;
+input a, b;
+
+always @(*) begin
+    y = ~(a & b);
+end
+
+endmodule
+
+// Testbench
+module tb_nand_gate_behavioral;
+reg a, b;
+wire y;
+
+nand_gate_behavioral uut (y, a, b);
+
+initial begin
+    $monitor("[Behavioral] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch Level Modeling (NAND)
+// ============================================
+module nand_gate_switch(y, a, b);
+output y;
+input a, b;
+
+supply1 Vdd;
+supply0 Gnd;
+
+// PMOS in parallel (pull-up)
+pmos p1 (y, Vdd, a);
+pmos p2 (y, Vdd, b);
+
+// NMOS in series (pull-down)
+wire nmid;
+nmos n1 (nmid, Gnd, b);
+nmos n2 (y, nmid, a);
+
+endmodule
+
+// Testbench
+module tb_nand_gate_switch;
+reg a, b;
+wire y;
+
+nand_gate_switch uut (y, a, b);
+
+initial begin
+    $monitor("[Switch] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END OF SHEET
+// ============================================

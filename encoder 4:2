@@ -1,0 +1,112 @@
+// ============================================
+// 4:2 ENCODER – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (4:2 Encoder)
+// ============================================
+module encoder4to2_gate(y1, y0, i0, i1, i2, i3);
+output y1, y0;
+input i0, i1, i2, i3;
+
+// Basic encoder (assuming one input is high at a time)
+or (y1, i2, i3);
+or (y0, i1, i3);
+
+endmodule
+
+// Testbench
+module tb_encoder4to2_gate;
+reg i0,i1,i2,i3;
+wire y1,y0;
+
+encoder4to2_gate uut(y1,y0,i0,i1,i2,i3);
+
+initial begin
+    $monitor("[Gate] t=%0t inputs=%b%b%b%b | y=%b%b",$time,i3,i2,i1,i0,y1,y0);
+    i0=1;i1=0;i2=0;i3=0; #10;
+    i0=0;i1=1;i2=0;i3=0; #10;
+    i0=0;i1=0;i2=1;i3=0; #10;
+    i0=0;i1=0;i2=0;i3=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (4:2 Encoder)
+// ============================================
+module encoder4to2_dataflow(y1, y0, i0, i1, i2, i3);
+output y1, y0;
+input i0, i1, i2, i3;
+
+assign y1 = i2 | i3;
+assign y0 = i1 | i3;
+
+endmodule
+
+// Testbench
+module tb_encoder4to2_dataflow;
+reg i0,i1,i2,i3;
+wire y1,y0;
+
+encoder4to2_dataflow uut(y1,y0,i0,i1,i2,i3);
+
+initial begin
+    $monitor("[Dataflow] t=%0t inputs=%b%b%b%b | y=%b%b",$time,i3,i2,i1,i0,y1,y0);
+    i0=1;i1=0;i2=0;i3=0; #10;
+    i0=0;i1=1;i2=0;i3=0; #10;
+    i0=0;i1=0;i2=1;i3=0; #10;
+    i0=0;i1=0;i2=0;i3=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (4:2 Encoder)
+// ============================================
+module encoder4to2_behavioral(y1, y0, i0, i1, i2, i3);
+output reg y1, y0;
+input i0, i1, i2, i3;
+
+always @(*) begin
+    case(1'b1)
+        i0: {y1,y0} = 2'b00;
+        i1: {y1,y0} = 2'b01;
+        i2: {y1,y0} = 2'b10;
+        i3: {y1,y0} = 2'b11;
+        default: {y1,y0} = 2'b00;
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_encoder4to2_behavioral;
+reg i0,i1,i2,i3;
+wire y1,y0;
+
+encoder4to2_behavioral uut(y1,y0,i0,i1,i2,i3);
+
+initial begin
+    $monitor("[Behavioral] t=%0t inputs=%b%b%b%b | y=%b%b",$time,i3,i2,i1,i0,y1,y0);
+    i0=1;i1=0;i2=0;i3=0; #10;
+    i0=0;i1=1;i2=0;i3=0; #10;
+    i0=0;i1=0;i2=1;i3=0; #10;
+    i0=0;i1=0;i2=0;i3=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// NOTE
+// This is a basic encoder (no priority handling)
+// If multiple inputs are high → output is undefined
+// ============================================
+
+// ============================================
+// END
+// ============================================

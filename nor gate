@@ -1,0 +1,136 @@
+// ============================================
+// NOR Gate – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (NOR)
+// ============================================
+module nor_gate_gate(y, a, b);
+output y;
+input a, b;
+
+nor (y, a, b);
+
+endmodule
+
+// Testbench
+module tb_nor_gate_gate;
+reg a, b;
+wire y;
+
+nor_gate_gate uut (y, a, b);
+
+initial begin
+    $monitor("[Gate] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (NOR)
+// ============================================
+module nor_gate_dataflow(y, a, b);
+output y;
+input a, b;
+
+assign y = ~(a | b);
+
+endmodule
+
+// Testbench
+module tb_nor_gate_dataflow;
+reg a, b;
+wire y;
+
+nor_gate_dataflow uut (y, a, b);
+
+initial begin
+    $monitor("[Dataflow] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (NOR)
+// ============================================
+module nor_gate_behavioral(y, a, b);
+output reg y;
+input a, b;
+
+always @(*) begin
+    y = ~(a | b);
+end
+
+endmodule
+
+// Testbench
+module tb_nor_gate_behavioral;
+reg a, b;
+wire y;
+
+nor_gate_behavioral uut (y, a, b);
+
+initial begin
+    $monitor("[Behavioral] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch Level Modeling (NOR)
+// ============================================
+module nor_gate_switch(y, a, b);
+output y;
+input a, b;
+
+supply1 Vdd;
+supply0 Gnd;
+
+// PMOS in series (pull-up)
+wire pmid;
+pmos p1 (pmid, Vdd, a);
+pmos p2 (y, pmid, b);
+
+// NMOS in parallel (pull-down)
+nmos n1 (y, Gnd, a);
+nmos n2 (y, Gnd, b);
+
+endmodule
+
+// Testbench
+module tb_nor_gate_switch;
+reg a, b;
+wire y;
+
+nor_gate_switch uut (y, a, b);
+
+initial begin
+    $monitor("[Switch] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END OF SHEET
+// ============================================

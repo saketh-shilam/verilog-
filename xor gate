@@ -1,0 +1,139 @@
+// ============================================
+// XOR Gate – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (XOR)
+// ============================================
+module xor_gate_gate(y, a, b);
+output y;
+input a, b;
+
+xor (y, a, b);
+
+endmodule
+
+// Testbench
+module tb_xor_gate_gate;
+reg a, b;
+wire y;
+
+xor_gate_gate uut (y, a, b);
+
+initial begin
+    $monitor("[Gate] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (XOR)
+// ============================================
+module xor_gate_dataflow(y, a, b);
+output y;
+input a, b;
+
+assign y = a ^ b;
+
+endmodule
+
+// Testbench
+module tb_xor_gate_dataflow;
+reg a, b;
+wire y;
+
+xor_gate_dataflow uut (y, a, b);
+
+initial begin
+    $monitor("[Dataflow] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (XOR)
+// ============================================
+module xor_gate_behavioral(y, a, b);
+output reg y;
+input a, b;
+
+always @(*) begin
+    y = a ^ b;
+end
+
+endmodule
+
+// Testbench
+module tb_xor_gate_behavioral;
+reg a, b;
+wire y;
+
+xor_gate_behavioral uut (y, a, b);
+
+initial begin
+    $monitor("[Behavioral] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch Level Modeling (XOR)
+// ============================================
+// Note: XOR at switch level is typically built using transmission gates
+// This is a simplified structural approach
+
+module xor_gate_switch(y, a, b);
+output y;
+input a, b;
+
+wire nota, notb;
+
+not (nota, a);
+not (notb, b);
+
+// XOR = (a & ~b) | (~a & b)
+wire w1, w2;
+
+and (w1, a, notb);
+and (w2, nota, b);
+or  (y, w1, w2);
+
+endmodule
+
+// Testbench
+module tb_xor_gate_switch;
+reg a, b;
+wire y;
+
+xor_gate_switch uut (y, a, b);
+
+initial begin
+    $monitor("[Switch-like] Time=%0t | a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END OF SHEET
+// ============================================

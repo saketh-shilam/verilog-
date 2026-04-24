@@ -1,0 +1,139 @@
+// ============================================
+// 2:1 MUX – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (MUX)
+// ============================================
+module mux2to1_gate(y, i0, i1, s);
+output y;
+input i0, i1, s;
+
+wire s_not, w1, w2;
+
+not (s_not, s);
+and (w1, i0, s_not);
+and (w2, i1, s);
+or (y, w1, w2);
+
+endmodule
+
+// Testbench
+module tb_mux2to1_gate;
+reg i0, i1, s;
+wire y;
+
+mux2to1_gate uut (y, i0, i1, s);
+
+initial begin
+    $monitor("[Gate] Time=%0t | s=%b i0=%b i1=%b | y=%b", $time, s, i0, i1, y);
+    i0=0; i1=1;
+    s=0; #10;
+    s=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (MUX)
+// ============================================
+module mux2to1_dataflow(y, i0, i1, s);
+output y;
+input i0, i1, s;
+
+assign y = (i0 & ~s) | (i1 & s);
+
+endmodule
+
+// Testbench
+module tb_mux2to1_dataflow;
+reg i0, i1, s;
+wire y;
+
+mux2to1_dataflow uut (y, i0, i1, s);
+
+initial begin
+    $monitor("[Dataflow] Time=%0t | s=%b i0=%b i1=%b | y=%b", $time, s, i0, i1, y);
+    i0=0; i1=1;
+    s=0; #10;
+    s=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (MUX)
+// ============================================
+module mux2to1_behavioral(y, i0, i1, s);
+output reg y;
+input i0, i1, s;
+
+always @(*) begin
+    if (s==0)
+        y = i0;
+    else
+        y = i1;
+end
+
+endmodule
+
+// Testbench
+module tb_mux2to1_behavioral;
+reg i0, i1, s;
+wire y;
+
+mux2to1_behavioral uut (y, i0, i1, s);
+
+initial begin
+    $monitor("[Behavioral] Time=%0t | s=%b i0=%b i1=%b | y=%b", $time, s, i0, i1, y);
+    i0=0; i1=1;
+    s=0; #10;
+    s=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch Level Modeling (MUX)
+// ============================================
+// Using transmission gates concept (simplified)
+
+module mux2to1_switch(y, i0, i1, s);
+output y;
+input i0, i1, s;
+
+wire s_bar;
+not (s_bar, s);
+
+// transmission-like behavior
+// when s=0 -> i0 passes
+// when s=1 -> i1 passes
+
+assign y = (s_bar & i0) | (s & i1);
+
+endmodule
+
+// Testbench
+module tb_mux2to1_switch;
+reg i0, i1, s;
+wire y;
+
+mux2to1_switch uut (y, i0, i1, s);
+
+initial begin
+    $monitor("[Switch-like] Time=%0t | s=%b i0=%b i1=%b | y=%b", $time, s, i0, i1, y);
+    i0=0; i1=1;
+    s=0; #10;
+    s=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END OF SHEET
+// ============================================

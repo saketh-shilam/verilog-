@@ -1,0 +1,124 @@
+// ============================================
+// 2:8 DECODER – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (2:8 Decoder)
+// ============================================
+module decoder2to8_gate(y, a, b);
+output [7:0] y;
+input a, b;
+
+wire an, bn;
+
+not (an, a);
+not (bn, b);
+
+and (y[0], an, bn);
+and (y[1], an, b);
+and (y[2], a, bn);
+and (y[3], a, b);
+
+// remaining outputs unused for 2:8 minimal example
+assign y[7:4] = 4'b0000;
+
+endmodule
+
+// Testbench
+module tb_decoder2to8_gate;
+reg a, b;
+wire [7:0] y;
+
+decoder2to8_gate uut(y, a, b);
+
+initial begin
+    $monitor("[Gate] t=%0t a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (2:8 Decoder)
+// ============================================
+module decoder2to8_dataflow(y, a, b);
+output [7:0] y;
+input a, b;
+
+assign y[0] = ~a & ~b;
+assign y[1] = ~a &  b;
+assign y[2] =  a & ~b;
+assign y[3] =  a &  b;
+assign y[7:4] = 4'b0000;
+
+endmodule
+
+// Testbench
+module tb_decoder2to8_dataflow;
+reg a, b;
+wire [7:0] y;
+
+decoder2to8_dataflow uut(y, a, b);
+
+initial begin
+    $monitor("[Dataflow] t=%0t a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (2:8 Decoder)
+// ============================================
+module decoder2to8_behavioral(y, a, b);
+output reg [7:0] y;
+input a, b;
+
+always @(*) begin
+    y = 8'b00000000;
+    case({a,b})
+        2'b00: y[0] = 1;
+        2'b01: y[1] = 1;
+        2'b10: y[2] = 1;
+        2'b11: y[3] = 1;
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_decoder2to8_behavioral;
+reg a, b;
+wire [7:0] y;
+
+decoder2to8_behavioral uut(y, a, b);
+
+initial begin
+    $monitor("[Behavioral] t=%0t a=%b b=%b | y=%b", $time, a, b, y);
+    a=0; b=0; #10;
+    a=0; b=1; #10;
+    a=1; b=0; #10;
+    a=1; b=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// NOTE
+// This is conceptually a 2:4 decoder mapped into 8-bit output.
+// Real 2:8 decoder needs 3 inputs.
+// ============================================
+
+// ============================================
+// END
+// ============================================

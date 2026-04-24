@@ -1,0 +1,150 @@
+// ============================================
+// 1:4 DEMUX – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level (simplified)
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (1:4 DEMUX)
+// ============================================
+module demux1to4_gate(y0, y1, y2, y3, d, s0, s1);
+output y0, y1, y2, y3;
+input d, s0, s1;
+
+wire s0n, s1n;
+
+not (s0n, s0);
+not (s1n, s1);
+
+and (y0, d, s1n, s0n);
+and (y1, d, s1n, s0);
+and (y2, d, s1,  s0n);
+and (y3, d, s1,  s0);
+
+endmodule
+
+// Testbench
+module tb_demux1to4_gate;
+reg d, s0, s1;
+wire y0, y1, y2, y3;
+
+demux1to4_gate uut(y0, y1, y2, y3, d, s0, s1);
+
+initial begin
+    $monitor("[Gate] t=%0t s1s0=%b%b d=%b | y=%b%b%b%b", $time, s1, s0, d, y3, y2, y1, y0);
+    d=1;
+    s1=0; s0=0; #10;
+    s1=0; s0=1; #10;
+    s1=1; s0=0; #10;
+    s1=1; s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (1:4 DEMUX)
+// ============================================
+module demux1to4_dataflow(y0, y1, y2, y3, d, s0, s1);
+output y0, y1, y2, y3;
+input d, s0, s1;
+
+assign y0 = d & ~s1 & ~s0;
+assign y1 = d & ~s1 &  s0;
+assign y2 = d &  s1 & ~s0;
+assign y3 = d &  s1 &  s0;
+
+endmodule
+
+// Testbench
+module tb_demux1to4_dataflow;
+reg d, s0, s1;
+wire y0, y1, y2, y3;
+
+demux1to4_dataflow uut(y0, y1, y2, y3, d, s0, s1);
+
+initial begin
+    $monitor("[Dataflow] t=%0t s1s0=%b%b d=%b | y=%b%b%b%b", $time, s1, s0, d, y3, y2, y1, y0);
+    d=1;
+    s1=0; s0=0; #10;
+    s1=0; s0=1; #10;
+    s1=1; s0=0; #10;
+    s1=1; s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (1:4 DEMUX)
+// ============================================
+module demux1to4_behavioral(y0, y1, y2, y3, d, s0, s1);
+output reg y0, y1, y2, y3;
+input d, s0, s1;
+
+always @(*) begin
+    {y3, y2, y1, y0} = 4'b0000;
+    case({s1, s0})
+        2'b00: y0 = d;
+        2'b01: y1 = d;
+        2'b10: y2 = d;
+        2'b11: y3 = d;
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_demux1to4_behavioral;
+reg d, s0, s1;
+wire y0, y1, y2, y3;
+
+demux1to4_behavioral uut(y0, y1, y2, y3, d, s0, s1);
+
+initial begin
+    $monitor("[Behavioral] t=%0t s1s0=%b%b d=%b | y=%b%b%b%b", $time, s1, s0, d, y3, y2, y1, y0);
+    d=1;
+    s1=0; s0=0; #10;
+    s1=0; s0=1; #10;
+    s1=1; s0=0; #10;
+    s1=1; s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch-Level (Simplified DEMUX)
+// ============================================
+module demux1to4_switch(y0, y1, y2, y3, d, s0, s1);
+output y0, y1, y2, y3;
+input d, s0, s1;
+
+assign y0 = d & ~s1 & ~s0;
+assign y1 = d & ~s1 &  s0;
+assign y2 = d &  s1 & ~s0;
+assign y3 = d &  s1 &  s0;
+
+endmodule
+
+// Testbench
+module tb_demux1to4_switch;
+reg d, s0, s1;
+wire y0, y1, y2, y3;
+
+demux1to4_switch uut(y0, y1, y2, y3, d, s0, s1);
+
+initial begin
+    $monitor("[Switch-like] t=%0t s1s0=%b%b d=%b | y=%b%b%b%b", $time, s1, s0, d, y3, y2, y1, y0);
+    d=1;
+    s1=0; s0=0; #10;
+    s1=0; s0=1; #10;
+    s1=1; s0=0; #10;
+    s1=1; s0=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END
+// ============================================

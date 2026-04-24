@@ -1,0 +1,152 @@
+// ============================================
+// 4:1 MUX – All Modeling Styles (Single Sheet)
+// Includes: Gate, Dataflow, Behavioral, Switch Level
+// With Testbenches
+// ============================================
+
+// ============================================
+// 1. Gate Level Modeling (4:1 MUX)
+// ============================================
+module mux4to1_gate(y, i0, i1, i2, i3, s0, s1);
+output y;
+input i0, i1, i2, i3, s0, s1;
+
+wire s0n, s1n;
+wire w0, w1, w2, w3;
+
+not (s0n, s0);
+not (s1n, s1);
+
+and (w0, i0, s1n, s0n);
+and (w1, i1, s1n, s0);
+and (w2, i2, s1, s0n);
+and (w3, i3, s1, s0);
+
+or (y, w0, w1, w2, w3);
+
+endmodule
+
+// Testbench
+module tb_mux4to1_gate;
+reg i0,i1,i2,i3,s0,s1;
+wire y;
+
+mux4to1_gate uut(y,i0,i1,i2,i3,s0,s1);
+
+initial begin
+    $monitor("[Gate] t=%0t s1s0=%b%b | y=%b",$time,s1,s0,y);
+    i0=0;i1=1;i2=0;i3=1;
+    s1=0;s0=0; #10;
+    s1=0;s0=1; #10;
+    s1=1;s0=0; #10;
+    s1=1;s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 2. Dataflow Modeling (4:1 MUX)
+// ============================================
+module mux4to1_dataflow(y, i0, i1, i2, i3, s0, s1);
+output y;
+input i0, i1, i2, i3, s0, s1;
+
+assign y = (~s1 & ~s0 & i0) |
+           (~s1 &  s0 & i1) |
+           ( s1 & ~s0 & i2) |
+           ( s1 &  s0 & i3);
+
+endmodule
+
+// Testbench
+module tb_mux4to1_dataflow;
+reg i0,i1,i2,i3,s0,s1;
+wire y;
+
+mux4to1_dataflow uut(y,i0,i1,i2,i3,s0,s1);
+
+initial begin
+    $monitor("[Dataflow] t=%0t s1s0=%b%b | y=%b",$time,s1,s0,y);
+    i0=0;i1=1;i2=0;i3=1;
+    s1=0;s0=0; #10;
+    s1=0;s0=1; #10;
+    s1=1;s0=0; #10;
+    s1=1;s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 3. Behavioral Modeling (4:1 MUX)
+// ============================================
+module mux4to1_behavioral(y, i0, i1, i2, i3, s0, s1);
+output reg y;
+input i0, i1, i2, i3, s0, s1;
+
+always @(*) begin
+    case({s1,s0})
+        2'b00: y = i0;
+        2'b01: y = i1;
+        2'b10: y = i2;
+        2'b11: y = i3;
+    endcase
+end
+
+endmodule
+
+// Testbench
+module tb_mux4to1_behavioral;
+reg i0,i1,i2,i3,s0,s1;
+wire y;
+
+mux4to1_behavioral uut(y,i0,i1,i2,i3,s0,s1);
+
+initial begin
+    $monitor("[Behavioral] t=%0t s1s0=%b%b | y=%b",$time,s1,s0,y);
+    i0=0;i1=1;i2=0;i3=1;
+    s1=0;s0=0; #10;
+    s1=0;s0=1; #10;
+    s1=1;s0=0; #10;
+    s1=1;s0=1; #10;
+    $finish;
+end
+endmodule
+
+
+// ============================================
+// 4. Switch-Level (Simplified)
+// ============================================
+module mux4to1_switch(y, i0, i1, i2, i3, s0, s1);
+output y;
+input i0, i1, i2, i3, s0, s1;
+
+assign y = (~s1 & ~s0 & i0) |
+           (~s1 &  s0 & i1) |
+           ( s1 & ~s0 & i2) |
+           ( s1 &  s0 & i3);
+
+endmodule
+
+// Testbench
+module tb_mux4to1_switch;
+reg i0,i1,i2,i3,s0,s1;
+wire y;
+
+mux4to1_switch uut(y,i0,i1,i2,i3,s0,s1);
+
+initial begin
+    $monitor("[Switch-like] t=%0t s1s0=%b%b | y=%b",$time,s1,s0,y);
+    i0=0;i1=1;i2=0;i3=1;
+    s1=0;s0=0; #10;
+    s1=0;s0=1; #10;
+    s1=1;s0=0; #10;
+    s1=1;s0=1; #10;
+    $finish;
+end
+endmodule
+
+// ============================================
+// END
+// ============================================
